@@ -21,6 +21,8 @@ app.use(express.urlencoded())
 app.use(cookieParser())
 
 import aiGeneratorRouter from "./routes/aiGenerator.routes.js";
+import userRouter from "./routes/user.routes.js"   
+app.use("/api/v1/users",userRouter);
 app.use("/api/v1/aiGenerator",aiGeneratorRouter)
 
 export {app}

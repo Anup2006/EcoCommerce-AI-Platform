@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { generateProductMetadataAI } from "../utils/aiService.js";
-import { ProductMetadata } from "../models/productMetadata.models.js";
+import { ProductMetadata } from "../models/productMetadata.model.js";
 
 const generateProductMetadata = asyncHandler(async (req, res) => {
 

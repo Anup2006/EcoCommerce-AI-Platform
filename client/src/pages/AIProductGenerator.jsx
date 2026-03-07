@@ -34,10 +34,10 @@ export default function AIProductGenerator() {
             ).unwrap();
             toast.success('Product added!!');
             dispatch(clearMetadata());
-            setProductTitle="";
-            setDescription="";
-            setMaterial="";
-            setPrice="";
+            setProductTitle("");
+            setDescription("");
+            setMaterial("");
+            setPrice("");
         }catch (err) {
             toast.error(err?.message || 'Failed to add product!!');
         }

@@ -1,4 +1,4 @@
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, useNavigate,Outlet } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
@@ -8,14 +8,17 @@ import {
   FileText,
   Settings,
   Search,
-  Bell,
-  User
+  LogOut
 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from '../redux/authSlice.js';
+import { toast } from "react-toastify";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/app" },
   { icon: Package, label: "Products", path: "/app/products" },
   { icon: Sparkles, label: "AI Product Generator", path: "/app/ai-product-generator" },
+  { icon: ShoppingCart, label: "Orders", path: "/orders" },
   { icon: MessageSquare, label: "AI Support Bot", path: "/app/ai-support-bot" },
   { icon: FileText, label: "AI Logs", path: "/app/ai-logs" },
   { icon: Settings, label: "Settings", path: "/app/settings" },
@@ -24,6 +27,26 @@ const menuItems = [
 export default function DashboardLayout() {
 
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user, token } = useSelector((state) => state.auth);
+
+  const handleLogout = async () => {
+    await dispatch(logoutUser())
+    .unwrap()
+    .then(() => {
+      toast.success("Logged out!!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+    });
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -64,21 +87,31 @@ export default function DashboardLayout() {
 
           })}
         </nav>
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-sm font-semibold">
-              AD
+        <div className="p-4 border-t border-gray-100 mt-auto">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white overflow-hidden">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user?.fullname?.charAt(0).toUpperCase() || "U"}
+                  className="w-10 h-10 object-cover"
+                />
+              ) : (
+                <span>{user?.fullname?.charAt(0).toUpperCase() || "U"}</span>
+              )}
             </div>
-
-            <div>
-              <p className="text-sm font-medium text-gray-900">
-                Admin User
-              </p>
-              <p className="text-xs text-gray-500">
-                admin@eco.com
-              </p>
+            <div className="flex-1 min-w-0">
+              <p className="truncate font-medium">{user?.fullname}</p>
+              <p className="text-sm text-gray-500 truncate">{user?.email}</p>
             </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 rounded-xl transition-all"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
         </div>
       </div>
 
@@ -95,14 +128,6 @@ export default function DashboardLayout() {
               className="w-full pl-9 pr-3 py-2 border rounded-lg bg-gray-50"
             />
           </div>
-
-          <div className="flex items-center gap-4">
-            <div className="w-9 h-9 bg-green-600 rounded-full flex items-center justify-center text-white">
-              <User size={18}/>
-            </div>
-
-          </div>
-
         </header>
 
         <main className="flex-1 overflow-auto p-6">

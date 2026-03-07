@@ -15,20 +15,43 @@ import {
 } from "react-router-dom";
 
 import App from "./App.jsx";
+import ProtectedRoutes from "./utils/ProtectedRoutes.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import Dashboard from "./pages/Dashboard.jsx";
 import AIProductGenerator from "./pages/AIProductGenerator.jsx";
 import Products from "./pages/Products.jsx";
+import Login from "./pages/AuthLanding/Login.jsx"; 
+import Signup from "./pages/AuthLanding/Signup.jsx";
+import ForgetPassword from "./pages/AuthLanding/ForgetPassword.jsx";
+
+const GoogleAuthWrapper=({ children }) => {
+  return (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      {children}
+    </GoogleOAuthProvider>
+  )
+}
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+      <Route path="/login" element={<GoogleAuthWrapper>
+        <Login />
+      </GoogleAuthWrapper>} />
+      <Route path="/signup" element={<GoogleAuthWrapper>
+        <Signup />
+      </GoogleAuthWrapper>} />
+      <Route path="/auth/forgetPassword" element={<ForgetPassword/>}/>
 
-      <Route path="/" element={<Navigate to="/app" replace />} />
-      <Route path="/app" element={<App />}>
-        <Route index element={<Dashboard/>} /> 
-        <Route path="ai-product-generator" element={<AIProductGenerator />} />
-        <Route path="products" element={<Products/>} />
-      </Route>    
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      <Route element={<ProtectedRoutes />}>
+        <Route path="/app" element={<App />}>
+          <Route index element={<Dashboard/>} /> 
+          <Route path="ai-product-generator" element={<AIProductGenerator />} />
+          <Route path="products" element={<Products/>} />
+        </Route>    
+      </Route>
     </>
   )
 );
