@@ -5,123 +5,117 @@ import { useNavigate } from "react-router-dom";
 import { Search, Plus } from "lucide-react";
 
 export default function Products() {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const { products, loading } = useSelector((state) => state.productMetadata);
+  const { products, loading } = useSelector((state) => state.productMetadata);
+  const [search, setSearch] = useState("");
 
-    const [search, setSearch] = useState("");
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch]);
 
-    useEffect(() => {
-        dispatch(getProducts());
-    }, [dispatch]);
-
-    const filteredProducts = products.filter((product) => {
-        const titleMatch = product.title
-            ?.toLowerCase()
-            .includes(search.toLowerCase());
-
-        const seoMatch = product.seoTags?.some((tag) =>
-            tag.toLowerCase().includes(search.toLowerCase())
-        );
-
-        return titleMatch || seoMatch;
-    });
-
-    return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-2xl font-semibold">
-                        Products
-                    </h1>
-                    <p className="text-gray-600">
-                        Manage your sustainable product catalog
-                    </p>
-                </div>
-
-                <button
-                    onClick={() =>navigate("/app/ai-product-generator")}
-                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-                >
-                    <Plus size={16} />
-                    Add Product
-                </button>
-            </div>
-
-            <div className="mb-4 relative max-w-md">
-                <Search
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-
-                <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="w-full pl-9 pr-3 py-2 border rounded-md bg-gray-50"
-                    value={search}
-                    onChange={(e) =>setSearch(e.target.value)}
-                />
-            </div>
-
-            <div className="bg-white shadow rounded-lg overflow-hidden">
-                <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
-                        <tr className="text-left text-sm text-gray-600">
-                            <th className="p-4">Product</th>
-                            <th className="p-4">Category</th>
-                            <th className="p-4">Material</th>
-                            <th className="p-4">Price</th>
-                            <th className="p-4">Generated At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading && (
-                        <tr>
-                            <td
-                                colSpan="5"
-                                className="p-6 text-center"
-                                >
-                                Loading products...
-                            </td>
-                        </tr>
-                        )}
-
-                        {!loading &&
-                        filteredProducts.map((product) => (
-                            <tr
-                                key={product._id}
-                                className="border-b hover:bg-gray-50"
-                            >
-
-                            <td className="p-4 font-medium">
-                                {product.title}
-                            </td>
-
-                            <td className="p-4">
-                                {product.primaryCategory}
-                            </td>
-
-                            <td className="p-4">
-                                {product.material}
-                            </td>
-
-                            <td className="p-4">
-                                ${product.price}
-                            </td>
-
-                            <td className="p-4">
-                                {new Date(
-                                product.generatedAt
-                                ).toLocaleDateString()}
-                            </td>
-
-                            </tr>
-
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  const filteredProducts = products.filter((product) => {
+    const titleMatch = product.title
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+    const seoMatch = product.seoTags?.some((tag) =>
+      tag.toLowerCase().includes(search.toLowerCase())
     );
+    return titleMatch || seoMatch;
+  });
+
+  return (
+    <div className="p-4 sm:p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-semibold">Products</h1>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Manage your sustainable product catalog
+          </p>
+        </div>
+
+        <button
+          onClick={() => navigate("/app/ai-product-generator")}
+          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+        >
+          <Plus size={16} />
+          Add Product
+        </button>
+      </div>
+
+      <div className="mb-4 relative max-w-md">
+        <Search
+          size={16}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+        />
+        <input
+          type="text"
+          placeholder="Search products..."
+          className="w-full pl-9 pr-3 py-2 border rounded-md bg-gray-50"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      <div className="hidden md:block bg-white shadow rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b">
+            <tr className="text-left text-sm text-gray-600">
+              <th className="p-4">Product</th>
+              <th className="p-4">Category</th>
+              <th className="p-4">Material</th>
+              <th className="p-4">Price</th>
+              <th className="p-4">Generated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading && (
+              <tr>
+                <td colSpan="5" className="p-6 text-center">
+                  Loading products...
+                </td>
+              </tr>
+            )}
+
+            {!loading &&
+              filteredProducts.map((product) => (
+                <tr
+                  key={product._id}
+                  className="border-b hover:bg-gray-50"
+                >
+                  <td className="p-4 font-medium">{product.title}</td>
+                  <td className="p-4">{product.primaryCategory}</td>
+                  <td className="p-4">{product.material}</td>
+                  <td className="p-4">${product.price}</td>
+                  <td className="p-4">{new Date(product.generatedAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {loading ? (
+          <p>Loading products...</p>
+        ) : (
+          filteredProducts.map((product) => (
+            <div
+              key={product._id}
+              className="bg-white shadow rounded-lg p-4 space-y-1"
+            >
+              <div className="flex justify-between items-center">
+                <p className="font-medium text-gray-900 truncate">{product.title}</p>
+                <span className="text-sm text-gray-500">{new Date(product.generatedAt).toLocaleDateString()}</span>
+              </div>
+              <p className="text-sm text-gray-700">Category: {product.primaryCategory}</p>
+              <p className="text-sm text-gray-700">Material: {product.material}</p>
+              <p className="text-sm text-gray-700">Price: ${product.price}</p>
+            </div>
+          ))
+        )}
+      </div>
+
+    </div>
+  );
 }
