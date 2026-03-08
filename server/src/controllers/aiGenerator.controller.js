@@ -3,6 +3,7 @@ import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { generateProductMetadataAI } from "../utils/aiService.js";
 import { ProductMetadata } from "../models/productMetadata.model.js";
+import { AILog } from "../models/aiLog.model.js";
 
 const generateProductMetadata = asyncHandler(async (req, res) => {
 
@@ -17,6 +18,14 @@ const generateProductMetadata = asyncHandler(async (req, res) => {
     description,
     material,
     price
+  });
+
+  await AILog.create({
+    module: "Product Generator",
+    action: "Metadata Generation",
+    details: `Generated metadata for product: ${title}`,
+    confidence: metadata?.confidence || 90,
+    status: "Success"
   });
 
   return res.status(200).json(

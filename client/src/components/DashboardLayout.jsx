@@ -6,7 +6,6 @@ import {
   ShoppingCart,
   MessageSquare,
   FileText,
-  Settings,
   Search,
   LogOut
 } from "lucide-react";
@@ -18,10 +17,9 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/app" },
   { icon: Package, label: "Products", path: "/app/products" },
   { icon: Sparkles, label: "AI Product Generator", path: "/app/ai-product-generator" },
-  { icon: ShoppingCart, label: "Orders", path: "/orders" },
+  { icon: ShoppingCart, label: "Orders", path: "/app/orders" },
   { icon: MessageSquare, label: "AI Support Bot", path: "/app/ai-support-bot" },
   { icon: FileText, label: "AI Logs", path: "/app/ai-logs" },
-  { icon: Settings, label: "Settings", path: "/app/settings" },
 ];
 
 export default function DashboardLayout() {
