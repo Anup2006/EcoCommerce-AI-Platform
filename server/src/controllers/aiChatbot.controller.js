@@ -39,13 +39,12 @@ const chatWithBot = asyncHandler(async (req, res) => {
     });
   }
 
-  // Generate AI response
   const aiResult = await generatechatBotResponse({
     message,
     orderData
   });
 
-  // Save conversation with orderId memory
+ 
   const conversation = await ConversationLog.create({
     customerMessage: message,
     aiResponse: aiResult.reply,

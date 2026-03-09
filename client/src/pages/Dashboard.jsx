@@ -27,10 +27,9 @@ export default function Dashboard() {
     Sparkles,
   };
 
-  // Component for each activity with View More logic
   function ActivityItem({ title, description, time, Icon }) {
     const [expanded, setExpanded] = useState(false);
-    const limit = 60; // characters before truncating
+    const limit = 60; 
 
     const shouldTruncate = description.length > limit;
 
@@ -63,8 +62,6 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
-
-      {/* Heading */}
       <div>
         <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
           Dashboard
@@ -74,7 +71,6 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat) => {
           const Icon = iconMap[stat.icon] || Package;
@@ -99,7 +95,6 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Recent Activity */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg border shadow-sm p-4 sm:p-6">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
