@@ -8,10 +8,14 @@ import { AILog } from "../models/aiLog.model.js";
 
 const chatWithBot = asyncHandler(async (req, res) => {
 
-  let { message, orderId } = req.body;
+  let { message, orderId, sessionId } = req.body;
 
   if (!message) {
     throw new apiError(400, "Message is required");
+  }
+
+  if (!sessionId) {
+    throw new apiError(400, "Session ID is required");
   }
 
   if (!orderId) {
@@ -22,21 +26,28 @@ const chatWithBot = asyncHandler(async (req, res) => {
   }
 
   if (!orderId) {
+
     const lastConversation = await ConversationLog
-      .findOne({ orderId: { $ne: null } })
+      .findOne({
+        sessionId,
+        orderId: { $ne: null }
+      })
       .sort({ createdAt: -1 });
 
     if (lastConversation) {
       orderId = lastConversation.orderId;
     }
+
   }
 
   let orderData = null;
 
   if (orderId) {
+
     orderData = await Order.findOne({
       orderId: { $regex: orderId, $options: "i" }
     });
+
   }
 
   const aiResult = await generatechatBotResponse({
@@ -44,20 +55,24 @@ const chatWithBot = asyncHandler(async (req, res) => {
     orderData
   });
 
- 
   const conversation = await ConversationLog.create({
+
+    sessionId,
     customerMessage: message,
     aiResponse: aiResult.reply,
     priority: aiResult.priority,
     orderId: orderId || null
+
   });
 
   await AILog.create({
+
     module: "Support Bot",
     action: "Customer Inquiry",
     details: message,
     confidence: aiResult.confidence || 90,
     status: aiResult.escalate ? "Escalated" : "Success"
+
   });
 
   return res.status(200).json(
@@ -73,12 +88,18 @@ const chatWithBot = asyncHandler(async (req, res) => {
       "AI response generated successfully"
     )
   );
+
 });
 
 const getConversationLogs = asyncHandler(async (req, res) => {
+  const { sessionId } = req.query;
+
+  if (!sessionId) {
+    throw new apiError(400, "Session ID is required");
+  }
 
   const logs = await ConversationLog
-    .find()
+    .find({ sessionId })
     .sort({ createdAt: -1 });
 
   return res.status(200).json(

@@ -44,7 +44,10 @@ export const getDashboardData = asyncHandler(async (req, res) => {
 
   .slice(0, 3)
 
-  .map(act => ({ ...act, time: new Date(act.time).toLocaleTimeString() }));
+  .map(act => ({
+    ...act,
+    time: new Date(act.time).toLocaleString()
+  }));
 
   return res.status(200).json(new apiResponse(200, {
     stats: {

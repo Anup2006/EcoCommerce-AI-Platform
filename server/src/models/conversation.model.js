@@ -1,6 +1,11 @@
 import mongoose,{Schema} from "mongoose";
 
 const conversationSchema = new Schema({
+  sessionId: {
+    type: String,
+    required: true,
+    index: true
+  },
   customerMessage: String,
   aiResponse: String,
   priority: {

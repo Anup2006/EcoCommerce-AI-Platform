@@ -7,6 +7,7 @@ const BACKEND_URL = `${base_uri}/chatbot`;
 const sendMessage = createAsyncThunk(
   "chatbot/sendMessage",
   async (messageData, { rejectWithValue }) => {
+
     try {
 
       const res = await axios.post(
@@ -28,12 +29,15 @@ const sendMessage = createAsyncThunk(
 
 const getConversationLogs = createAsyncThunk(
   "chatbot/getConversationLogs",
-  async (_, { rejectWithValue }) => {
+  async (sessionId, { rejectWithValue }) => {
 
     try {
 
       const res = await axios.get(
-        `${BACKEND_URL}/logs`
+        `${BACKEND_URL}/logs`,
+        {
+          params: { sessionId }
+        }
       );
 
       return res.data.data;
@@ -50,7 +54,6 @@ const getConversationLogs = createAsyncThunk(
 );
 
 const initialState = {
-
   messages: [],
   logs: [],
   loading: false,
@@ -96,6 +99,7 @@ export const aiChatbotSlice = createSlice({
       .addCase(sendMessage.rejected, (state, action) => {
 
         state.loading = false;
+
         state.error =
           action.payload?.message || "AI response failed";
 
@@ -127,5 +131,5 @@ export const aiChatbotSlice = createSlice({
 });
 
 export const { addUserMessage, clearChat } =aiChatbotSlice.actions;
-export { sendMessage, getConversationLogs };
+export {sendMessage,getConversationLogs}
 export default aiChatbotSlice.reducer;
